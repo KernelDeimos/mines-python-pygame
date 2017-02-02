@@ -13,6 +13,7 @@ class GameBoardTile:
 	def __init__(self):
 		self.isMine = False
 		self.isVisible = False
+		self.isFlagged = False
 
 		self.value = 0
 
@@ -72,6 +73,15 @@ class GameBoardTile:
 		self.value = value
 		self.is_visible(True)
 
+	def toggle_flag(self):
+		if self.isFlagged:
+			self.isFlagged = False
+		else:
+			self.isFlagged = True
+
+	def is_flagged(self):
+		return self.isFlagged
+
 	def draw(self, size=40):
 		"""
 		Render the tile given its current state
@@ -103,6 +113,21 @@ class GameBoardTile:
 			# Display a value if value is set
 			elif self.value != 0:
 				t_surf, t_rect = self.font.render(str(self.value), (0,255,0))
+		elif self.isFlagged:
+			# Draw a neat flag
+			xLeft = size / 5
+			xRigh = 4*size/5
+			points = [
+				(xRigh, 1*size/5),
+				(xLeft, 3*size/10),
+				(xRigh, 2*size/5)
+			]
+			pygame.draw.polygon(surf, (255,0,0), points)
+			pygame.draw.line(surf, (0,0,0),
+				(xRigh,1*size/5),
+				(xRigh,4*size/5),
+				2
+			)
 			
 		# Draw text on tile
 		if t_surf is not None:
@@ -122,25 +147,28 @@ class GameBoard:
 		self.height = height
 
 		self.cellSize = 40
+
 	def get_cell(self, row, col):
 		return self.grid[row][col]
 
-	def click_cell_at_pixel(self, x, y):
+	def get_grid_position_from_pixel(self, x, y):
 		"""
-		Activates the tile at given pixel coordinates
+		Returns the grid coordinates at a pixel value
 
 		Returns
 		-------
-		bool
-			False if not a mine, True if a mine
+		tuple
+			(row,col)
+		None
+			If pixel coordinate is not a grid cell
 		"""
 		row = y / self.cellSize
 		col = x / self.cellSize
 
 		if not self._is_valid_cell(row,col):
-			return False
+			return None
 
-		return self.click_cell(row, col)
+		return (row, col)
 
 	def click_cell(self, row, col):
 		"""
@@ -155,12 +183,24 @@ class GameBoard:
 			False if not a mine, True if a mine
 		"""
 		cell = self.grid[row][col]
+
+		if cell.is_flagged():
+			return False
+
 		if cell.is_mine():
 			cell.is_visible(True)
 			return True
 
 		self.clear_cell(row, col)
 		return False
+
+	def flag_cell(self, row, col):
+		"""
+		Toggles a flag on a cell if possible
+		"""
+		cell = self.grid[row][col]
+		if cell.is_visible(): return
+		cell.toggle_flag()
 
 	def clear_cell(self, row, col):
 		# Fetch surrounding cells

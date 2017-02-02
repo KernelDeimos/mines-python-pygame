@@ -76,13 +76,23 @@ class GameInstance:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT: return
 				if event.type == pygame.MOUSEBUTTONDOWN:
-					result = self.board.click_cell_at_pixel(
+					# Get grid position
+					row, col = self.board.get_grid_position_from_pixel(
 						event.pos[0], event.pos[1]
 					)
 
-					# If a mine was chosen, end the game
-					if result == True:
-						self.running = False
+					# Clear button
+					if event.button == 1:
+						# Attempt to clear that tile
+						result = self.board.click_cell(row, col)
+
+						# If a mine was chosen, end the game
+						if result == True:
+							self.running = False
+
+					# Flag button
+					elif event.button == 3:
+						self.board.flag_cell(row, col)
 
 			# Clear the screen
 			self.screen.fill((0,0,0))
