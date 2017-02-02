@@ -28,6 +28,7 @@ be added to the repo even if it's not on the TODO list. My only condition
 is that the classic gameplay is always an option.
 
 Here are some creative ideas:
+
 1. Skins (probably wait until rendering is separate though)
 2. Game mode system
 3. Powerup system (#2 is a prerequisite)
