@@ -41,8 +41,6 @@ class GameBoardTile:
 			surf.fill((255,255,255))
 		# Draw Number
 		t_surf, t_rect = None, None
-		if self.isMine:
-			t_surf, t_rect = self.font.render('M', (255,0,0))
 		if self.isVisible:
 			if self.isMine:
 				t_surf, t_rect = self.font.render('M', (255,0,0))
@@ -67,16 +65,19 @@ class GameBoard:
 		self.cellSize = 40
 	def get_cell(self, row, col):
 		return self.grid[row][col]
+
+	# @return False if not a mine, True if a mine
 	def click_cell_at_pixel(self, x, y):
 		row = y / self.cellSize
 		col = x / self.cellSize
 
 		if not self._is_valid_cell(row,col):
-			return
+			return False
 
-		self.click_cell(row, col)
+		return self.click_cell(row, col)
 
 	# precondition: valid cell
+	# @return False if not a mine, True if a mine
 	def click_cell(self, row, col):
 		cell = self.grid[row][col]
 		if cell.is_mine():
@@ -84,6 +85,7 @@ class GameBoard:
 			return True
 
 		self.clear_cell(row, col)
+		return False
 
 	def clear_cell(self, row, col):
 		# Fetch surrounding cells

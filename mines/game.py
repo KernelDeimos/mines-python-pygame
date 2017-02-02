@@ -3,6 +3,9 @@ import math
 
 import minesboard
 
+# import Tkinter # For error dialogs
+import Tkinter, tkMessageBox
+
 class GameMenu:
 	pass
 
@@ -60,14 +63,25 @@ class GameInstance:
 		self.board = board
 		self.screen = screen
 		self.clock = clock
+
+		self.running = True
 	def run(self):
-		while 1:
+		while self.running:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT: return
 				if event.type == pygame.MOUSEBUTTONDOWN:
-					self.board.click_cell_at_pixel(
+					result = self.board.click_cell_at_pixel(
 						event.pos[0], event.pos[1]
 					)
+
+					# If a mine was chosen, end the game
+					if result == True:
+						window = Tkinter.Tk()
+						window.wm_withdraw()
+						tkMessageBox.showinfo(title="You lose", message="You lose")
+						window.destroy()
+						self.running = False
+
 			# Clear the screen
 			self.screen.fill((0,0,0))
 			# Draw the board

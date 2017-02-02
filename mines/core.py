@@ -1,11 +1,12 @@
 import sys, pygame
 import random
 import game
+import minesmenu
 
 class Application:
 	def main(self):
 		pygame.init()
-		self.resolution = 600, 800
+		self.resolution = 1280, 1024
 
 		self.screen = pygame.display.set_mode(self.resolution)
 
@@ -17,10 +18,27 @@ class Application:
 
 		clock = pygame.time.Clock()
 
-		builder = game.GameInstanceBuilder(random, self.screen, clock)
-		gameInstance = builder.make_instance(game.GameInstanceBuilder.DIFFICULTY_EASY)
+		while 1:
 
-		gameInstance.run()
+			menu = minesmenu.GameMenu(self.screen, clock)
+			action = menu.run()
+			
+			if action == "Quit":
+				return
+
+			difficulty = None
+			if action == "Easy":
+				difficulty = game.GameInstanceBuilder.DIFFICULTY_EASY
+			elif action == "Medium":
+				difficulty = game.GameInstanceBuilder.DIFFICULTY_MEDIUM
+			elif action == "Hard":
+				difficulty = game.GameInstanceBuilder.DIFFICULTY_HARD
+			elif action == "Expert":
+				difficulty = game.GameInstanceBuilder.DIFFICULTY_EXPERT
+
+			builder = game.GameInstanceBuilder(random, self.screen, clock)
+			gameInstance = builder.make_instance(difficulty)
+			gameInstance.run()
 
 if __name__ == '__main__':
 	app = Application()
