@@ -35,8 +35,7 @@ class Button:
 		return surf
 
 class GameMenu:
-	def __init__(self, screen, clock):
-		self.screen = screen
+	def __init__(self, clock):
 		self.clock = clock
 
 		self.running = True
@@ -49,12 +48,16 @@ class GameMenu:
 		self.running = False
 
 	def run(self):
+
 		options = []
 		options.append(Button("Easy"))
 		options.append(Button("Medium"))
 		options.append(Button("Hard"))
 		options.append(Button("Expert"))
 		options.append(Button("Quit"))
+
+		resolution = 240, 20 + 80*len(options)
+		self.screen = pygame.display.set_mode(resolution)
 
 		while self.running:
 			for event in pygame.event.get():

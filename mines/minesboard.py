@@ -93,7 +93,7 @@ class GameBoardTile:
 		"""
 
 		if self.font is None:
-			self.font = fonts.SysFont('Courier New', 20, True)
+			self.font = fonts.SysFont('Courier New', size/2, True)
 
 		# Create surface
 		surf = pygame.Surface((size,size))
@@ -141,12 +141,18 @@ class GameBoardTile:
 		return surf
 
 class GameBoard:
-	def __init__(self, grid, width, height):
+	def __init__(self, grid, width, height, cellSize=40):
 		self.grid = grid
 		self.width = width
 		self.height = height
 
-		self.cellSize = 40
+		self.cellSize = cellSize
+
+	def get_pixel_resolution(self):
+		return (
+			self.width*self.cellSize,
+			self.height*self.cellSize
+		)
 
 	def get_cell(self, row, col):
 		return self.grid[row][col]
@@ -288,6 +294,6 @@ class GameBoard:
 				y = r*size
 				x = c*size
 
-				cellSurf = cell.draw()
+				cellSurf = cell.draw(self.cellSize)
 				surf.blit(cellSurf, (x,y))
 		return surf

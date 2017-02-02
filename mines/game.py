@@ -17,22 +17,25 @@ class GameInstanceBuilder:
 	DIFFICULTY_HARD = 3
 	DIFFICULTY_EXPERT = 4
 
-	def __init__(self, rand, screen, clock):
+	def __init__(self, rand, clock):
 		self.rand = rand
-		self.screen = screen
 		self.clock = clock
 
 	def make_instance(self, difficulty):
 		# Determine board configuration
+		cellSize = 40
 		row, col, mines = None, None, None
+
 		if difficulty == self.DIFFICULTY_EASY:
 			row, col, mines = 8, 8, 10
 		elif difficulty == self.DIFFICULTY_MEDIUM:
 			row, col, mines = 16, 16, 40
 		elif difficulty == self.DIFFICULTY_HARD:
 			row, col, mines = 16, 30, 99
+			cellSize = 26
 		elif difficulty == self.DIFFICULTY_EXPERT:
 			row, col, mines = 24, 30, 200
+			cellSize = 26
 		else:
 			raise Exception ("Invalid board difficulty!")
 
@@ -47,7 +50,7 @@ class GameInstanceBuilder:
 				cells.append(tile)
 
 		# Create board object
-		board = minesboard.GameBoard(rows, col, row)
+		board = minesboard.GameBoard(rows, col, row, cellSize)
 
 		# Populate board with mines
 		placedMines = 0
@@ -58,18 +61,21 @@ class GameInstanceBuilder:
 			if board.get_cell(ro,co).is_mine(True):
 				placedMines += 1
 
-		return GameInstance(board, self.screen, self.clock)
+		return GameInstance(board, self.clock)
 
 class GameInstance:
-	def __init__(self, board, screen, clock):
+	def __init__(self, board, clock):
 		self.board = board
-		self.screen = screen
 		self.clock = clock
 
 		self.running = True
 
 		self.resolution = 1280, 1024
 	def run(self):
+
+		self.resolution = self.board.get_pixel_resolution()
+		self.screen = pygame.display.set_mode(self.resolution)
+
 		win = False
 
 		while self.running:
@@ -109,7 +115,11 @@ class GameInstance:
 		self.screen.fill((0,0,0))
 
 		# Display win/lose message
-		font = self.font = fonts.SysFont('Courier New', 60, True)
+		font = None
+		if self.resolution[0] < 500:
+			font = self.font = fonts.SysFont('Courier New', 30, True)
+		else:
+			font = self.font = fonts.SysFont('Courier New', 60, True)
 
 		message, colour = None, None
 

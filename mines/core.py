@@ -8,8 +8,6 @@ class Application:
 		pygame.init()
 		self.resolution = 1280, 1024
 
-		self.screen = pygame.display.set_mode(self.resolution)
-
 		rec = pygame.Rect(100,100,40,40)
 		speed = [2,2]
 
@@ -20,7 +18,7 @@ class Application:
 
 		while 1:
 
-			menu = minesmenu.GameMenu(self.screen, clock)
+			menu = minesmenu.GameMenu(clock)
 			action = menu.run()
 			
 			if action == "Quit":
@@ -36,7 +34,7 @@ class Application:
 			elif action == "Expert":
 				difficulty = game.GameInstanceBuilder.DIFFICULTY_EXPERT
 
-			builder = game.GameInstanceBuilder(random, self.screen, clock)
+			builder = game.GameInstanceBuilder(random, clock)
 			gameInstance = builder.make_instance(difficulty)
 			gameInstance.run()
 
