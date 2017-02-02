@@ -1,5 +1,7 @@
 import sys, pygame
-import math
+import pygame.freetype as fonts
+
+import time
 
 import minesboard
 
@@ -65,7 +67,11 @@ class GameInstance:
 		self.clock = clock
 
 		self.running = True
+
+		self.resolution = 1280, 1024
 	def run(self):
+		win = False
+
 		while self.running:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT: return
@@ -76,10 +82,6 @@ class GameInstance:
 
 					# If a mine was chosen, end the game
 					if result == True:
-						window = Tkinter.Tk()
-						window.wm_withdraw()
-						tkMessageBox.showinfo(title="You lose", message="You lose")
-						window.destroy()
 						self.running = False
 
 			# Clear the screen
@@ -91,4 +93,31 @@ class GameInstance:
 			# Flip the screen
 			pygame.display.flip()
 			# Wait a little
-			self.clock.tick(60) 
+			self.clock.tick(60)
+
+		# Clear the screen
+		self.screen.fill((0,0,0))
+
+		# Display win/lose message
+		font = self.font = fonts.SysFont('Courier New', 60, True)
+
+		message, colour = None, None
+
+		if win:
+			message = "You Win!"
+			colour = (0,255,0)
+		else:
+			message = "You Lose :/"
+			colour = (255,0,0)
+
+		# Draw Text
+		t_surf, t_rect = self.font.render(message,colour)
+		y = self.resolution[1] / 2 - t_rect[3] / 2
+		x = self.resolution[0] / 2 - t_rect[2] / 2
+		self.screen.blit(t_surf, (x, y))
+
+		# Flip the screen
+		pygame.display.flip()
+
+		# Wait a few seconds
+		time.sleep(2)

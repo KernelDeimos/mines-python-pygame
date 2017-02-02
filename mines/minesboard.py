@@ -2,6 +2,13 @@ import pygame.freetype as fonts
 
 import sys, pygame
 
+"""
+This module contains the Minesweeper board
+
+- GameBoardTile
+- GameBoard
+"""
+
 class GameBoardTile:
 	def __init__(self):
 		self.isMine = False
@@ -10,42 +17,94 @@ class GameBoardTile:
 		self.value = 0
 
 		self.font = None
+
 	def is_mine(self, value=None):
+		"""
+		Check or modify mine presence of tile
+
+		Parameters
+		----------
+		value : bool
+			True or False to set/unset mine, None to check
+		
+		Returns
+		-------
+		bool
+			Whether mine is present, or if presence was changed
+		"""
 		if value is None: return self.isMine
 		elif self.isMine != value:
 			self.isMine = value
 			return True
 		else:
 			return False
-	def set_value(self, value):
-		self.value = value
-		self.is_visible(True)
+
 	def is_visible(self, value=None):
+		"""
+		Check or modify visibility of tile
+
+		Parameters
+		----------
+		value : bool
+			True or False to set/unset visible, None to check
+		
+		Returns
+		-------
+		bool
+			Whether tile is visible, or if visibility was changed
+		"""
 		if value is None: return self.isVisible
 		elif self.isVisible != value:
 			self.isVisible = value
 			return True
 		else:
 			return False
+
+	def set_value(self, value):
+		"""
+		Set the number to be displayed on this tile
+
+		Parameters
+		----------
+		value : int
+			Number to be displayed on tile
+		"""
+		self.value = value
+		self.is_visible(True)
+
 	def draw(self, size=40):
+		"""
+		Render the tile given its current state
+
+		Returns
+		----------
+		pygame.Surface
+			Surface with a the rendered tile
+		"""
 
 		if self.font is None:
 			self.font = fonts.SysFont('Courier New', 20, True)
 
 		# Create surface
 		surf = pygame.Surface((size,size))
+
 		# Fill Surface
 		if not self.isVisible:
 			surf.fill((90,90,90))
 		else:
 			surf.fill((255,255,255))
-		# Draw Number
+
+		# Generate text for tile
 		t_surf, t_rect = None, None
 		if self.isVisible:
+			# Display M on an exposed mine
 			if self.isMine:
 				t_surf, t_rect = self.font.render('M', (255,0,0))
+			# Display a value if value is set
 			elif self.value != 0:
 				t_surf, t_rect = self.font.render(str(self.value), (0,255,0))
+			
+		# Draw text on tile
 		if t_surf is not None:
 			y = size / 2 - t_rect[3] / 2
 			x = size / 2 - t_rect[2] / 2
@@ -66,8 +125,15 @@ class GameBoard:
 	def get_cell(self, row, col):
 		return self.grid[row][col]
 
-	# @return False if not a mine, True if a mine
 	def click_cell_at_pixel(self, x, y):
+		"""
+		Activates the tile at given pixel coordinates
+
+		Returns
+		-------
+		bool
+			False if not a mine, True if a mine
+		"""
 		row = y / self.cellSize
 		col = x / self.cellSize
 
@@ -76,9 +142,18 @@ class GameBoard:
 
 		return self.click_cell(row, col)
 
-	# precondition: valid cell
-	# @return False if not a mine, True if a mine
 	def click_cell(self, row, col):
+		"""
+		Activates the tile at given grid coordinates
+
+		Grid coordinates must be a valid location of a
+		cell with the current grid size.
+
+		Returns
+		-------
+		bool
+			False if not a mine, True if a mine
+		"""
 		cell = self.grid[row][col]
 		if cell.is_mine():
 			cell.is_visible(True)
