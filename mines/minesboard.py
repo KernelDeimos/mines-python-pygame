@@ -9,7 +9,7 @@ class GameBoardTile:
 
 		self.value = 0
 
-		self.font = fonts.SysFont('Courier New', 20, True)
+		self.font = None
 	def is_mine(self, value=None):
 		if value is None: return self.isMine
 		elif self.isMine != value:
@@ -28,6 +28,9 @@ class GameBoardTile:
 		else:
 			return False
 	def draw(self, size=40):
+
+		if self.font is None:
+			self.font = fonts.SysFont('Courier New', 20, True)
 
 		# Create surface
 		surf = pygame.Surface((size,size))
