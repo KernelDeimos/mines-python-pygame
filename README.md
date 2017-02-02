@@ -37,5 +37,5 @@ Here are some creative ideas:
 5. Board analysis tools
    - Part of scenario creator?
 6. Multiplayer
-   - I'd like to make a JavaScript clone in the future some
+   - I'd like to make a JavaScript clone in the future so
      websockets would be an awesome option for this.
