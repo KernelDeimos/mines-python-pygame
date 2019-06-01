@@ -6,10 +6,17 @@ Putting more information in this README file is on the todo list.
 
 Running the Game
 ----------------
+If `python` and `pip` already point to Python 2:
 ```
 make init
 make test
 make try
+```
+
+Otherwise:
+```
+pip2 install -r requirements.txt
+python2 main.py
 ```
 
 TODO List
